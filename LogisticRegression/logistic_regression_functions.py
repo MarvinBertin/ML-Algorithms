@@ -37,6 +37,10 @@ def log_likelihood(X, y, coeffs):
     h = hypothesis(X, coeffs)
     return np.mean(y * np.log(h) + (1 - y) * np.log(1 - h))
 
+def reg_log_likelihood(X, y, coeffs, gamma):
+    cost = log_likelihood(X, y, coeffs)
+    return cost - (gamma * np.mean(coeffs**2)/2.)
+
 def log_likelihood_gradient(X, y, coeffs):
     '''
     INPUT: 2 dimensional numpy array, numpy array, numpy array
@@ -48,6 +52,13 @@ def log_likelihood_gradient(X, y, coeffs):
     h = hypothesis(X, coeffs)
     return (y - h).dot(X)
 
+def reg_log_likelihood_gradient(X, y, coeffs, gamma):
+    N = float(X.shape[0])
+    grad = log_likelihood_gradient(X, y, coeffs)
+    filter_coeffs = coeffs.copy()
+    filter_coeffs[0] = 0
+    return (grad - (gamma * filter_coeffs)) / N
+    
 def accuracy(y_true, y_pred):
     '''
     INPUT: numpy array, numpy array
