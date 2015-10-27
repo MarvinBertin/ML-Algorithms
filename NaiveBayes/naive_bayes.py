@@ -14,10 +14,7 @@ class NaiveBayes(object):
         self.p = None
 
     def compute_prior(self, y):
-        label_freq = Counter(y)
-        num_docs = float(len(y))
-        # probability of observing the a particular label
-        self.prior = {label: freq/num_docs for label, freq in label_freq.iteritems()}
+        self.prior = Counter(y)
 
     def compute_likelihood(self, X, y):
         self.per_feature_per_label = defaultdict(lambda: np.zeros(self.p))
@@ -27,13 +24,13 @@ class NaiveBayes(object):
         for label, Xrow in zip(y, X):
             self.per_feature_per_label[label] += Xrow
 
-        # total number of words per label
+        #total number of words per label
         self.feature_sum_per_label = {label:sum(Xrow)
                                       for label, Xrow in self.per_feature_per_label.iteritems()}
 
         # likelihood/probability of observing each word given the label
         for label, Xrow in self.per_feature_per_label.iteritems():
-            self.likelihood[label] += (Xrow + self.alpha * np.ones(self.p)) / (self.feature_sum_per_label[label] + self.alpha * self.p)
+            self.likelihood[label] += (Xrow + self.alpha) / (self.feature_sum_per_label[label] + self.alpha * self.p)
 
     def fit(self, X, y):
         self.p = X.shape[1]
@@ -46,7 +43,7 @@ class NaiveBayes(object):
         for Xrow in X:
             for label in self.prior.iterkeys():
                 self.posterior[label] = Xrow.dot(np.log(self.likelihood[label])) + np.log(self.prior[label])
-            y_hat.append(sorted(self.posterior.items(), key=itemgetter(1), reverse=True)[0][0])
+            y_hat.append(max(self.posterior, key=self.posterior.get))
 
         return y_hat
 
