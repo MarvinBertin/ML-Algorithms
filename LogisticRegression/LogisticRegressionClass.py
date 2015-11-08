@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class LogisticReg(object):
 
     def __init__(self, fit_intercept = True, scale = True, regularizarion = "L2"):
