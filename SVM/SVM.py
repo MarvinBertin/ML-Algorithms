@@ -19,7 +19,7 @@ class SVM(object):
     def gram_matrix(self, X):
         n = X.shape[0]
 
-        return np.array(map(lambda t: self.kernel(t[0], t[1]),
+        return np.array(map(lambda t: self.kernel(X[t[0]], X[t[1]]),
                         itertools.product(range(n), repeat = 2))).reshape((n, n))
         
 
@@ -106,7 +106,7 @@ class SVM(object):
         """
         result = bias
         for i, support_vec in enumerate(support_vectors):
-            result += np.sum(kernel(support_vec, X) * support_weights[i] * support_vector_labels[i])
+            result += kernel(support_vec, X) * support_weights[i] * support_vector_labels[i]
         
         return np.sign(result).item()
 
