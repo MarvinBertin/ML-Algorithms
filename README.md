@@ -5,3 +5,6 @@ Machine Learning Algorithms implemented in Python
 * Logistic Regression
 * KNeighbors Classifier
 * Naive Bayes
+* SVM
+* NMF
+* RandomForest
