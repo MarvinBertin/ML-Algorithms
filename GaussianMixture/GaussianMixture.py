@@ -27,25 +27,39 @@ def GaussianMixture(object):
         
         # For all the data points in self.X, calculate the weighting of that datapoint using the _weight method defined
         # below 
-        
+        self.weights = np.zeros((len(self.X), self.k))
         #Each x in self.X is assigned a weight based on the equation
+        for i, x in enumerate(self.X):
+            for k in range(self.k):
+                self.weights[i, k] = self._weight(x, k)
         
-        
-        pass
+        self.weights = (self.weights.T / self.weights.sum(axis=1)).T
     
     def _maximization(self):
         
         # Now calculate the weighting means and variance for each of the norms as given to you in the notes. 
         # Make sure to correctly calculate the weighting. Since there are only two norms, what does that mean?
         
-        
+        N = np.sum(self.weights,axis=1)
+
+            for i in range(self.k):
+                mu = np.dot(responses[i,:],data) / N[i]
+                sigma = np.zeros((d,d))
+
+                for j in range(len(self.X)):
+                   sigma += responses[i,j] * np.outer(data[j,:] - mu, data[j,:] - mu)
+
+                sigma = sigma / N[i]
+
+                self.comps[i].update(mu,sigma) # update the normal with new parameters
+                self.priors[i] = N[i] / np.sum(N) # normalize the new priors
         pass
     
     
-    def _weight(self):
+    def _weight(self, x, k):
         # Use self.norm[index].pdf(self.x) to calculate the phi as per the equation given to you in the notes. 
         # also use self.alpha
-        
+        return self.alpha * self.norm[k].pdf(x)
         
         
         
@@ -56,7 +70,7 @@ def GaussianMixture(object):
         
         #calculate alpha by summation as given to you in the notes and save to self.alpha
         
-        pass
+        self.alpha = sum(self.weights)
     
     
     def train(self, X, threshold = .001):
